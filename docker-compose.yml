@@ -28,7 +28,8 @@ services:
 
   # phpMyAdmin
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
+    image: phpmyadmin:latest
+    platform: linux/arm64/v8
     container_name: library_phpmyadmin
     restart: unless-stopped
     environment:
