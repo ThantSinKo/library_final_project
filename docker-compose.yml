@@ -30,7 +30,7 @@ services:
     networks: [stack]
 
   api:
-    build: ./backend
+    build: ./01_api
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -48,7 +48,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./02_frontend
       args:
         - API_HOST=${API_HOST:-http://localhost:3001}
     restart: unless-stopped
