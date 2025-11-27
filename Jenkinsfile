@@ -20,7 +20,7 @@ pipeline {
         )
         string(
             name: 'NEXT_PUBLIC_API_HOST',
-            defaultValue: 'http://192.168.56.1:3001',
+            defaultValue: 'http://192.168.0.196:3001',
             description: 'API host URL for frontend to connect to.'
         )
     }
