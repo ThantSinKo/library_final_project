@@ -108,6 +108,7 @@ export default function Page() {
   return (
     <main className="container">
       <header className="header">
+        <title>Book Library</title>
         <h1 className="title">📚 Book Library</h1>
         <p className="subtitle">Discover your next great read</p>
         
