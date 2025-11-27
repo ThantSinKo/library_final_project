@@ -1,24 +1,8 @@
 -- ============================================
--- Book Library Database Initialization
--- ============================================
-
--- Set character set and collation
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ============================================
--- Drop existing tables if they exist
--- ============================================
-DROP TABLE IF EXISTS `reviews`;
-DROP TABLE IF EXISTS `borrowings`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `books`;
-
--- ============================================
--- Create Books Table
+-- Books Table
 -- ============================================
 CREATE TABLE `books` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `author` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `isbn` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -29,16 +13,9 @@ CREATE TABLE `books` (
   `cover_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pages` int(5) DEFAULT NULL,
   `available_copies` int(5) DEFAULT 1,
-  `total_copies` int(5) DEFAULT 1,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `isbn` (`isbn`),
-  KEY `idx_genre` (`genre`),
-  KEY `idx_author` (`author`)
+  `total_copies` int(5) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================
--- Insert Books Data
--- ============================================
 INSERT INTO `books` (`id`, `title`, `author`, `isbn`, `publisher`, `published_year`, `genre`, `description`, `cover_image`, `pages`, `available_copies`, `total_copies`) VALUES
 (1, 'To Kill a Mockingbird', 'Harper Lee', '978-0-06-112008-4', 'J. B. Lippincott & Co.', 1960, 'Fiction', 'A gripping tale of racial injustice and childhood innocence in the American South during the 1930s. The story follows young Scout Finch and her father, lawyer Atticus Finch.', 'https://covers.openlibrary.org/b/id/8228691-L.jpg', 324, 3, 5),
 (2, '1984', 'George Orwell', '978-0-452-28423-4', 'Secker & Warburg', 1949, 'Dystopian', 'A dystopian social science fiction novel that follows the life of Winston Smith, a low-ranking member of the Party in the nation of Oceania, where the Party exercises total control.', 'https://covers.openlibrary.org/b/id/7222246-L.jpg', 328, 2, 4),
@@ -53,25 +30,26 @@ INSERT INTO `books` (`id`, `title`, `author`, `isbn`, `publisher`, `published_ye
 (11, 'The Chronicles of Narnia', 'C.S. Lewis', '978-0-06-076489-0', 'Geoffrey Bles', 1950, 'Fantasy', 'A series of seven fantasy novels set in the magical land of Narnia, a place where animals talk, magic is common, and good battles evil.', 'https://covers.openlibrary.org/b/id/8244321-L.jpg', 767, 2, 2),
 (12, 'Moby-Dick', 'Herman Melville', '978-0-14-243724-7', 'Harper & Brothers', 1851, 'Adventure', 'The narrative of Captain Ahabs obsessive quest for revenge against Moby Dick, the giant white sperm whale that bit off his leg on the ships previous voyage.', 'https://covers.openlibrary.org/b/id/8239988-L.jpg', 635, 1, 2);
 
+ALTER TABLE `books`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `isbn` (`isbn`);
+
+ALTER TABLE `books`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+
 -- ============================================
--- Create Users Table
+-- Users Table
 -- ============================================
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `full_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `member_since` date NOT NULL,
-  `status` enum('active','suspended','inactive') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `username` (`username`),
-  KEY `idx_status` (`status`)
+  `status` enum('active','suspended','inactive') COLLATE utf8mb4_unicode_ci DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================
--- Insert Users Data
--- ============================================
 INSERT INTO `users` (`id`, `username`, `email`, `full_name`, `member_since`, `status`) VALUES
 (1, 'john_doe', 'john.doe@email.com', 'John Doe', '2023-01-15', 'active'),
 (2, 'sarah_smith', 'sarah.smith@email.com', 'Sarah Smith', '2023-03-22', 'active'),
@@ -80,29 +58,28 @@ INSERT INTO `users` (`id`, `username`, `email`, `full_name`, `member_since`, `st
 (5, 'david_jones', 'david.jones@email.com', 'David Jones', '2024-01-20', 'active'),
 (6, 'lisa_taylor', 'lisa.taylor@email.com', 'Lisa Taylor', '2024-03-12', 'suspended');
 
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `username` (`username`);
+
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+
 -- ============================================
--- Create Borrowings Table
+-- Borrowings Table
 -- ============================================
 CREATE TABLE `borrowings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `book_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `borrowed_date` date NOT NULL,
   `due_date` date NOT NULL,
   `returned_date` date DEFAULT NULL,
-  `status` enum('borrowed','returned','overdue') COLLATE utf8mb4_unicode_ci DEFAULT 'borrowed',
-  PRIMARY KEY (`id`),
-  KEY `book_id` (`book_id`),
-  KEY `user_id` (`user_id`),
-  KEY `idx_status` (`status`),
-  KEY `idx_due_date` (`due_date`),
-  CONSTRAINT `borrowings_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `borrowings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  `status` enum('borrowed','returned','overdue') COLLATE utf8mb4_unicode_ci DEFAULT 'borrowed'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================
--- Insert Borrowings Data
--- ============================================
 INSERT INTO `borrowings` (`id`, `book_id`, `user_id`, `borrowed_date`, `due_date`, `returned_date`, `status`) VALUES
 (1, 1, 1, '2024-10-01', '2024-10-15', '2024-10-14', 'returned'),
 (2, 5, 2, '2024-10-05', '2024-10-19', '2024-10-18', 'returned'),
@@ -113,27 +90,31 @@ INSERT INTO `borrowings` (`id`, `book_id`, `user_id`, `borrowed_date`, `due_date
 (7, 4, 2, '2024-10-18', '2024-11-01', NULL, 'borrowed'),
 (8, 6, 3, '2024-10-20', '2024-11-03', NULL, 'borrowed');
 
+ALTER TABLE `borrowings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `book_id` (`book_id`),
+  ADD KEY `user_id` (`user_id`);
+
+ALTER TABLE `borrowings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+ALTER TABLE `borrowings`
+  ADD CONSTRAINT `borrowings_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `borrowings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+
 -- ============================================
--- Create Reviews Table
+-- Reviews Table
 -- ============================================
 CREATE TABLE `reviews` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `book_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `rating` int(1) NOT NULL CHECK (`rating` >= 1 AND `rating` <= 5),
   `comment` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `review_date` date NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `book_id` (`book_id`),
-  KEY `user_id` (`user_id`),
-  KEY `idx_rating` (`rating`),
-  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  `review_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================
--- Insert Reviews Data
--- ============================================
 INSERT INTO `reviews` (`id`, `book_id`, `user_id`, `rating`, `comment`, `review_date`) VALUES
 (1, 1, 1, 5, 'An absolute masterpiece! The storytelling is incredible and the themes are timeless.', '2024-10-15'),
 (2, 5, 2, 5, 'Magical and enchanting! Perfect for both children and adults. Could not put it down.', '2024-10-19'),
@@ -144,43 +125,14 @@ INSERT INTO `reviews` (`id`, `book_id`, `user_id`, `rating`, `comment`, `review_
 (7, 4, 2, 4, 'Great portrayal of the American Dream. Beautifully written.', '2024-10-05'),
 (8, 9, 4, 5, 'Simple yet powerful allegory. Everyone should read this.', '2024-10-13');
 
--- ============================================
--- Set AUTO_INCREMENT values
--- ============================================
-ALTER TABLE `books` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-ALTER TABLE `users` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-ALTER TABLE `borrowings` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-ALTER TABLE `reviews` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `book_id` (`book_id`),
+  ADD KEY `user_id` (`user_id`);
 
--- ============================================
--- Re-enable foreign key checks
--- ============================================
-SET FOREIGN_KEY_CHECKS = 1;
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
--- ============================================
--- Display success message
--- ============================================
-SELECT 'Database initialization completed successfully!' AS message;
-
--- ============================================
--- Display table statistics
--- ============================================
-SELECT 
-    'books' AS table_name, 
-    COUNT(*) AS record_count 
-FROM books
-UNION ALL
-SELECT 
-    'users' AS table_name, 
-    COUNT(*) AS record_count 
-FROM users
-UNION ALL
-SELECT 
-    'borrowings' AS table_name, 
-    COUNT(*) AS record_count 
-FROM borrowings
-UNION ALL
-SELECT 
-    'reviews' AS table_name, 
-    COUNT(*) AS record_count 
-FROM reviews;
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
