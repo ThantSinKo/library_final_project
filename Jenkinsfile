@@ -19,7 +19,7 @@ pipeline {
             description: 'Remove volumes (clears database)'
         )
         string(
-            name: 'NEXT_PUBLIC_API_HOST',
+            name: 'API_HOST',
             defaultValue: 'http://192.168.0.196:3001',
             description: 'API host URL for frontend to connect to.'
         )
@@ -67,7 +67,7 @@ MYSQL_PORT=3306
 PHPMYADMIN_PORT=8888
 API_PORT=3001
 FRONTEND_PORT=3000
-NEXT_PUBLIC_API_HOST=${params.NEXT_PUBLIC_API_HOST}
+API_HOST=${params.API_HOST}
 EOF
                         """
                     }
