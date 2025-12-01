@@ -7,7 +7,7 @@ A full-stack web application with automated CI/CD pipeline for managing a book l
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Jenkins-D24939?logo=jenkins)
 ![Database](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql)
 
----
+-----
 
 ## 🎯 Project Overview
 
